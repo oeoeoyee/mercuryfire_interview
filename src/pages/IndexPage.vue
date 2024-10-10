@@ -3,7 +3,7 @@
     <div class="full-width q-px-xl">
       <div class="q-mb-xl">
         <q-input v-model="tempData.name" label="姓名" />
-        <q-input v-model="tempData.age" label="年齡" />
+        <q-input v-model="tempData.age" type="number" label="年齡" />
         <q-btn @click="createData(tempData.name, tempData.age)" color="primary" class="q-mt-md">更新</q-btn>
       </div>
 

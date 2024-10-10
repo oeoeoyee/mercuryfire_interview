@@ -4,7 +4,7 @@
       <div class="q-mb-xl">
         <q-input v-model="tempData.name" label="姓名" />
         <q-input v-model="tempData.age" label="年齡" />
-        <q-btn color="primary" class="q-mt-md">新增</q-btn>
+        <q-btn @click="createData(tempData.name, tempData.age)" color="primary" class="q-mt-md">更新</q-btn>
       </div>
 
       <q-table
@@ -80,16 +80,22 @@
 <script setup lang="ts">
 import axios from 'axios';
 import { QTableProps } from 'quasar';
-import { ref } from 'vue';
+import { ref, onMounted } from 'vue';
 interface btnType {
   label: string;
   icon: string;
   status: string;
 }
+interface talbeData {
+  name: string,
+  age: number,
+  id: number,
+}
 const blockData = ref([
   {
     name: 'test',
     age: 25,
+    id: 0,
   },
 ]);
 const tableConfig = ref([
@@ -124,8 +130,69 @@ const tempData = ref({
   age: '',
 });
 function handleClickOption(btn, data) {
-  // ...
+  switch (btn.status) {
+    case 'edit':
+      UpdateData(data)
+      break;
+    case 'delete':
+      delData(data.id)
+      break;
+    default:
+      break;
+  }
 }
+
+// Get api
+const getData = () => {
+  axios('https://dahua.metcfire.com.tw/api/CRUDTest/a')
+    .then( (response) => {
+        blockData.value = response.data
+      }
+    ).catch( (error) => console.log(error));
+}
+
+// Update api
+const UpdateData = (dataObj: talbeData) => {  
+  // axios.patch('https://dahua.metcfire.com.tw/api/CRUDTest', {
+  //   name: dataObj.name,
+  //   age: dataObj.age,
+  //   id: dataObj.id
+  // })
+  //   .then( (response) => {
+  //       blockData.value = response.data
+  //     }
+  //   ).catch( (error) => console.log(error));
+}
+
+// Del api
+const delData = (id) => {
+    if( !confirm('是否確定刪除該筆資料?') ) return false
+    
+    axios.delete(`https://dahua.metcfire.com.tw/api/CRUDTest/${id}`)
+    .then( (response) => {
+      console.log(response);
+    })
+    .catch( (error) => {
+      console.log(error);
+    });
+}
+
+// Create api
+// function createData (name: string, age: number) {
+//   axios.post('https://dahua.metcfire.com.tw/api/CRUDTest', {
+//     name: name,
+//     age: age
+//   })
+//     .then( (response) => {
+//         blockData.value = response.data
+//       }
+//     ).catch( (error) => console.log(error));
+// }
+
+onMounted(()=> {
+  getData()
+})
+
 </script>
 
 <style lang="scss" scoped>
